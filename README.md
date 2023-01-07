@@ -1,6 +1,6 @@
 ## Stream SQLite to Minio
 This repo contains all the artifacts needed to create a small pipeline containing:
-* A dockerized Go application that generates random car order records and inserts them to an SQLite database.
+* A dockerized Go application (order-app) that generates random car order records and inserts them to an SQLite database.
 * A dockerized [Litestream server](https://litestream.io) that streams all SQLite changes to an S3 compatible storage.
 * A dockerized [Minio](https://min.io/) server that acts as the object storage hosting the SQLite replicas/backups sent by Litestream.
 ## How to use:
