@@ -4,6 +4,6 @@ dbs:
       - type: s3
         bucket: mybucket
         path: cars.db
-        endpoint: http://172.24.0.2:9000  # the ip address of minio server
+        endpoint: http://172.24.0.3:9000  # the ip address of minio server
         access-key-id: minioadmin
         secret-access-key: minioadmin
