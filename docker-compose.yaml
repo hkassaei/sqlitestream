@@ -1,0 +1,27 @@
+version: '3'
+services:
+  minio:
+    image: minio/minio
+    ports:
+     - 9000:9000
+     - 9001:9001
+    volumes:
+     - ./minio-storage:/data 
+    command: server /data --console-address ":9001"
+
+  litestream:
+    image: litestream/litestream
+    links:
+     - minio
+    volumes:
+     - ./database-storage:/data
+     - ./litestream-conf/litestream.yml:/etc/litestream.yml
+    command: replicate
+  
+  order-svc:
+    build: 
+      context: ./order-svc
+    volumes:
+     -  ./database-storage:/data
+
+     
