@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: car-orders
+spec:
+  selector:
+    matchLabels:
+      app: car-orders
+  serviceName: car-orders
+
+  replicas: 1
+
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 100Mi
+  
+  template:
+    metadata:
+      labels:
+        app: car-orders
+    spec:
+      volumes:
+      - name: configmap
+        configMap:
+          name: litestream
+  
+      containers:
+      - name: car-orders
+        image: ghcr.io/hkassaei/car-orders-sqlitestream:v0.1.0
+        volumeMounts:
+        - name: data
+          mountPath: /data
+      # litestream side car
+      - name: litestream
+        image: litestream/litestream:0.3.9
+        args: ['replicate']
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        - name: configmap
+          mountPath: /etc/litestream.yml
+          subPath: litestream.yml
+        env:
+        - name: LITESTREAM_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: aws-creds
+              key: ACCESS_KEY_ID
+        - name: LITESTREAM_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-creds
+              key: SECRET_ACCESS_KEY
+        ports:
+        - name: metrics
+          containerPort: 9090

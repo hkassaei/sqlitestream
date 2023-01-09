@@ -1,0 +1,7 @@
+dbs:
+  - path: /data/cars.db
+    replicas:
+      - url: s3://<BUCKET_NAME>/cars.db
+        region: ca-central-1
+        retention: 1h
+        sync-interval: 10s
